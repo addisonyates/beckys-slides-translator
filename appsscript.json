@@ -3,7 +3,8 @@
     "dependencies": {},
     "exceptionLogging": "STACKDRIVER",
     "oauthScopes": [
-        "https://www.googleapis.com/auth/presentations.currentonly"
+        "https://www.googleapis.com/auth/presentations.currentonly",
+        "https://www.googleapis.com/auth/drive.file"
     ],
     "runtimeVersion": "V8",
     "addOns": {
@@ -16,6 +17,9 @@
         },
         "slides": {
             "homepageTrigger": {
+                "runFunction": "onHomepage"
+            },
+            "onFileScopeGrantedTrigger": {
                 "runFunction": "onHomepage"
             }
         }

@@ -118,7 +118,50 @@ const LANGUAGE_MAP =
  * @return {CardService.Card} The card to show the user.
  */
 function onHomepage(e) {
-    return createSelectionCard(e, DEFAULT_ORIGIN_LAN, DEFAULT_DESTINATION_LAN, DEFAULT_INPUT_TEXT, DEFAULT_OUTPUT_TEXT);
+    return createHomepageCard(e);
+}
+
+function onFileScopeGranted(e) {
+    return createHomepageCard(e);
+}
+
+/**
+ * Callback function for a button action. Instructs Docs to display a
+ * permissions dialog to the user, requesting `drive.file` scope for the
+ * current file on behalf of this add-on.
+ *
+ * @param {Object} e The parameters object that contains the document’s ID
+ * @return {editorFileScopeActionResponse}
+ */
+function onRequestFileScopeButtonClicked(e) {
+    return CardService.newEditorFileScopeActionResponseBuilder()
+        .requestFileScopeForActiveDocument().build();
+}
+
+function createHomepageCard(e) {
+    var slidesEventObject = e['slides'];
+
+    if (slidesEventObject['addonHasFileScopePermission']) {
+        return createSelectionCard(e, DEFAULT_ORIGIN_LAN, DEFAULT_DESTINATION_LAN, DEFAULT_INPUT_TEXT, DEFAULT_OUTPUT_TEXT);
+    } else {
+        var builder = CardService.newCardBuilder();
+        var cardSection = CardService.newCardSection();
+
+        cardSection.addWidget(
+            CardService.newTextParagraph().setText(
+                'The add-on needs permission to translate this presentation.'));
+
+        var buttonAction = CardService.newAction()
+            .setFunctionName('onRequestFileScopeButtonClicked');
+
+        var button = CardService.newTextButton()
+            .setText('Request permission')
+            .setOnClickAction(buttonAction);
+
+        cardSection.addWidget(button);
+
+        return builder.addSection(cardSection).build();
+    }
 }
 
 /**
