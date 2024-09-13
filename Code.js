@@ -130,7 +130,6 @@ function onHomepage(e) {
  * @return {CardService.Card} The card to show to the user.
  */
 function createSelectionCard(e, originLanguage, destinationLanguage, inputText, outputText) {
-    var hostApp = e['hostApp'];
     var builder = CardService.newCardBuilder();
 
     // "From" language selection & text input section
@@ -140,28 +139,12 @@ function createSelectionCard(e, originLanguage, destinationLanguage, inputText, 
             .setFieldName('input')
             .setValue(inputText)
             .setTitle('Enter text...')
-            .setMultiline(true));
-
-    if (hostApp === 'docs') {
-        fromSection.addWidget(CardService.newButtonSet()
-            .addButton(CardService.newTextButton()
-                .setText('Get Selection')
-                .setOnClickAction(CardService.newAction().setFunctionName('getDocsSelection'))
-                .setDisabled(false)))
-    } else if (hostApp === 'sheets') {
-        fromSection.addWidget(CardService.newButtonSet()
-            .addButton(CardService.newTextButton()
-                .setText('Get Selection')
-                .setOnClickAction(CardService.newAction().setFunctionName('getSheetsSelection'))
-                .setDisabled(false)))
-    } else if (hostApp === 'slides') {
-        fromSection.addWidget(CardService.newButtonSet()
+            .setMultiline(true))
+        .addWidget(CardService.newButtonSet()
             .addButton(CardService.newTextButton()
                 .setText('Get Selection')
                 .setOnClickAction(CardService.newAction().setFunctionName('getSlidesSelection'))
-                .setDisabled(false)))
-    }
-
+                .setDisabled(false)));
 
     builder.addSection(fromSection);
 
@@ -233,62 +216,6 @@ function clearText(e) {
     var originLanguage = e.formInput.origin;
     var destinationLanguage = e.formInput.destination;
     return createSelectionCard(e, originLanguage, destinationLanguage, DEFAULT_INPUT_TEXT, DEFAULT_OUTPUT_TEXT);
-}
-
-/**
- * Helper function to get the text selected.
- * @return {CardService.Card} The selected text.
- */
-function getDocsSelection(e) {
-    var text = '';
-    var selection = DocumentApp.getActiveDocument().getSelection();
-    Logger.log(selection)
-    if (selection) {
-        var elements = selection.getRangeElements();
-        for (var i = 0; i < elements.length; i++) {
-            Logger.log(elements[i]);
-            var element = elements[i];
-            // Only modify elements that can be edited as text; skip images and other non-text elements.
-            if (element.getElement().asText() && element.getElement().asText().getText() !== '') {
-                text += element.getElement().asText().getText() + '\n';
-            }
-        }
-    }
-
-    if (text !== '') {
-        var originLanguage = e.formInput.origin;
-        var destinationLanguage = e.formInput.destination;
-        var translation = LanguageApp.translate(text, e.formInput.origin, e.formInput.destination);
-        return createSelectionCard(e, originLanguage, destinationLanguage, text, translation);
-    }
-}
-
-/**
- * Helper function to get the text of the selected cells.
- * @return {CardService.Card} The selected text.
- */
-function getSheetsSelection(e) {
-    var text = '';
-    var ranges = SpreadsheetApp.getActive().getSelection().getActiveRangeList().getRanges();
-    for (var i = 0; i < ranges.length; i++) {
-        const range = ranges[i];
-        const numRows = range.getNumRows();
-        const numCols = range.getNumColumns();
-        for (let i = 1; i <= numCols; i++) {
-            for (let j = 1; j <= numRows; j++) {
-                const cell = range.getCell(j, i);
-                if (cell.getValue()) {
-                    text += cell.getValue() + '\n';
-                }
-            }
-        }
-    }
-    if (text !== '') {
-        var originLanguage = e.formInput.origin;
-        var destinationLanguage = e.formInput.destination;
-        var translation = LanguageApp.translate(text, e.formInput.origin, e.formInput.destination);
-        return createSelectionCard(e, originLanguage, destinationLanguage, text, translation);
-    }
 }
 
 /**
