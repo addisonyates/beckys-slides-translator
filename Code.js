@@ -1,4 +1,4 @@
-const DEFAULT_DESTINATION_LAN = 'en';
+const DEFAULT_DESTINATION_LAN = 'es';
 
 const LANGUAGE_MAP =
     [
