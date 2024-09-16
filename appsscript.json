@@ -9,8 +9,8 @@
     "runtimeVersion": "V8",
     "addOns": {
         "common": {
-            "name": "Translate",
-            "logoUrl": "https://www.gstatic.com/images/branding/product/1x/translate_24dp.png",
+            "name": "Becky's Translator",
+            "logoUrl": "https://cdn1.npcdn.net/images/5586c0422de2ed778302fe542fc84402.png",
             "layoutProperties": {
                 "primaryColor": "#2772ed"
             }
