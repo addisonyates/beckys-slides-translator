@@ -173,6 +173,11 @@ function generateLanguagesDropdown(fieldName, fieldTitle, previousSelected) {
  */
 function getElementTexts(elements) {
     let texts = [];
+
+    if (!Array.isArray(elements)) {
+        elements = [elements];
+    }
+
     elements.forEach((element) => {
         switch (element.getPageElementType()) {
             case SlidesApp.PageElementType.GROUP:
@@ -184,7 +189,10 @@ function getElementTexts(elements) {
                 const table = element.asTable();
                 for (let y = 0; y < table.getNumColumns(); ++y) {
                     for (let x = 0; x < table.getNumRows(); ++x) {
-                        texts.push(table.getCell(x, y).getText());
+                        const cell = table.getCell(x, y);
+                        if (cell.getMergeState() !== SlidesApp.CellMergeState.MERGED) {
+                            texts.push(cell.getText());
+                        }
                     }
                 }
                 break;
@@ -193,6 +201,7 @@ function getElementTexts(elements) {
                 break;
         }
     });
+
     return texts;
 }
 
