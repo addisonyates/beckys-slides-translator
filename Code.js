@@ -206,7 +206,7 @@ function createSelectionCard(e, originLanguage, destinationLanguage, inputText, 
             .addButton(CardService.newTextButton()
                 .setText('Translate')
                 .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-                .setOnClickAction(CardService.newAction().setFunctionName('translateText'))
+                .setOnClickAction(CardService.newAction().setFunctionName('translatePresentation'))
                 .setDisabled(false))
             .addButton(CardService.newTextButton()
                 .setText('Clear')
@@ -281,4 +281,57 @@ function getSlidesSelection(e) {
         var translation = LanguageApp.translate(text, e.formInput.origin, e.formInput.destination);
         return createSelectionCard(e, originLanguage, destinationLanguage, text, translation);
     }
+}
+
+/**
+ * Recursively gets child text elements a list of elements.
+ * @param {PageElement[]} elements The elements to get text from.
+ * @return {Text[]} An array of text elements.
+ */
+function getElementTexts(elements) {
+    let texts = [];
+    elements.forEach((element) => {
+        switch (element.getPageElementType()) {
+            case SlidesApp.PageElementType.GROUP:
+                element.asGroup().getChildren().forEach((child) => {
+                    texts = texts.concat(getElementTexts(child));
+                });
+                break;
+            case SlidesApp.PageElementType.TABLE:
+                const table = element.asTable();
+                for (let y = 0; y < table.getNumColumns(); ++y) {
+                    for (let x = 0; x < table.getNumRows(); ++x) {
+                        texts.push(table.getCell(x, y).getText());
+                    }
+                }
+                break;
+            case SlidesApp.PageElementType.SHAPE:
+                texts.push(element.asShape().getText());
+                break;
+        }
+    });
+    return texts;
+}
+
+/**
+ * Translates all slide elements within the active presentation
+ * to the target language using Apps Script's Language service.
+ */
+function translatePresentation(e) {
+    const targetLanguage = e.formInput.destination;
+    const presentation = SlidesApp.getActivePresentation();
+    const slides = presentation.getSlides();
+
+    let texts = [];
+
+    slides.forEach((slide) => {
+        const elements = slide.getPageElements();
+        const elementTexts = getElementTexts(elements);
+        texts = texts.concat(elementTexts);
+    });
+
+    // Translate all elements in-place.
+    texts.forEach((text) => {
+        text.setText(LanguageApp.translate(text.asRenderedString(), '', targetLanguage));
+    });
 }
