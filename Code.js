@@ -178,9 +178,7 @@ function getElementTexts(elements) {
     elements.forEach((element) => {
         switch (element.getPageElementType()) {
             case SlidesApp.PageElementType.GROUP:
-                element.asGroup().getChildren().forEach((child) => {
-                    texts = texts.concat(getElementTexts(child));
-                });
+                texts = texts.concat(element.asGroup().getChildren().flatMap(getElementTexts));
                 break;
             case SlidesApp.PageElementType.TABLE:
                 const table = element.asTable();
