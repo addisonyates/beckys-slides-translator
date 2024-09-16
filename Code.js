@@ -115,10 +115,6 @@ const LANGUAGE_MAP =
  * @return {CardService.Card} The card to show the user.
  */
 function onHomepage(e) {
-    return createHomepageCard(e);
-}
-
-function createHomepageCard(e) {
     return createSelectionCard(e, DEFAULT_DESTINATION_LAN);
 }
 
@@ -155,7 +151,8 @@ function createSelectionCard(e, destinationLanguage) {
  * @return {CardService.SelectionInput} The card to show to the user.
  */
 function generateLanguagesDropdown(fieldName, fieldTitle, previousSelected) {
-    var selectionInput = CardService.newSelectionInput().setTitle(fieldTitle)
+    var selectionInput = CardService.newSelectionInput()
+        .setTitle(fieldTitle)
         .setFieldName(fieldName)
         .setType(CardService.SelectionInputType.DROPDOWN);
 
