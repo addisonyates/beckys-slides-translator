@@ -159,7 +159,7 @@ function generateLanguagesDropdown(fieldName, fieldTitle, previousSelected) {
         .setFieldName(fieldName)
         .setType(CardService.SelectionInputType.DROPDOWN);
 
-    LANGUAGE_MAP.forEach((language, index, array) => {
+    LANGUAGE_MAP.forEach((language) => {
         selectionInput.addItem(language.text, language.val, language.val == previousSelected);
     })
 
