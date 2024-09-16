@@ -181,21 +181,33 @@ function getElementTexts(elements) {
                 texts = texts.concat(getGroupTexts(element.asGroup()));
                 break;
             case SlidesApp.PageElementType.TABLE:
-                const table = element.asTable();
-                for (let y = 0; y < table.getNumColumns(); ++y) {
-                    for (let x = 0; x < table.getNumRows(); ++x) {
-                        const cell = table.getCell(x, y);
-                        if (cell.getMergeState() !== SlidesApp.CellMergeState.MERGED) {
-                            texts.push(cell.getText());
-                        }
-                    }
-                }
+                texts = texts.concat(getTableTexts(element.asTable()));
                 break;
             case SlidesApp.PageElementType.SHAPE:
                 texts.push(element.asShape().getText());
                 break;
         }
     });
+
+    return texts;
+}
+
+/**
+ * Gets text elements from a table element.
+ * @param {Table} table The table to get text from.
+ * @return {Text[]} An array of text elements.
+ */
+function getTableTexts(table) {
+    let texts = [];
+
+    for (let y = 0; y < table.getNumColumns(); ++y) {
+        for (let x = 0; x < table.getNumRows(); ++x) {
+            const cell = table.getCell(x, y);
+            if (cell.getMergeState() !== SlidesApp.CellMergeState.MERGED) {
+                texts.push(cell.getText());
+            }
+        }
+    }
 
     return texts;
 }
