@@ -184,12 +184,21 @@ function getElementTexts(elements) {
                 texts = texts.concat(getTableTexts(element.asTable()));
                 break;
             case SlidesApp.PageElementType.SHAPE:
-                texts.push(element.asShape().getText());
+                texts = texts.concat(getShapeTexts(element.asShape()));
                 break;
         }
     });
 
     return texts;
+}
+
+/**
+ * Gets text elements from a shape element.
+ * @param {Shape} shape The shape to get text from.
+ * @return {Text[]} An array of text elements.
+ */
+function getShapeTexts(shape) {
+    return [shape.getText()];
 }
 
 /**
