@@ -178,7 +178,7 @@ function getElementTexts(elements) {
     elements.forEach((element) => {
         switch (element.getPageElementType()) {
             case SlidesApp.PageElementType.GROUP:
-                texts = texts.concat(element.asGroup().getChildren().flatMap(getElementTexts));
+                texts = texts.concat(getGroupTexts(element.asGroup()));
                 break;
             case SlidesApp.PageElementType.TABLE:
                 const table = element.asTable();
@@ -198,6 +198,15 @@ function getElementTexts(elements) {
     });
 
     return texts;
+}
+
+/**
+ * Gets text elements from a group element.
+ * @param {Group} group The group to get text from.
+ * @return {Text[]} An array of text elements.
+ */
+function getGroupTexts(group) {
+    return group.getChildren().flatMap(getElementTexts);
 }
 
 /**
