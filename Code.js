@@ -169,27 +169,22 @@ function generateLanguagesDropdown(fieldName, fieldTitle, previousSelected) {
  * @return {Text[]} An array of text elements.
  */
 function getElementTexts(elements) {
-    let texts = [];
-
     if (!Array.isArray(elements)) {
         elements = [elements];
     }
 
-    elements.forEach((element) => {
+    return elements.flatMap((element) => {
         switch (element.getPageElementType()) {
             case SlidesApp.PageElementType.GROUP:
-                texts = texts.concat(getGroupTexts(element.asGroup()));
-                break;
+                return getGroupTexts(element.asGroup());
             case SlidesApp.PageElementType.TABLE:
-                texts = texts.concat(getTableTexts(element.asTable()));
-                break;
+                return getTableTexts(element.asTable());
             case SlidesApp.PageElementType.SHAPE:
-                texts = texts.concat(getShapeTexts(element.asShape()));
-                break;
+                return getShapeTexts(element.asShape());
+            default:
+                return [];
         }
     });
-
-    return texts;
 }
 
 /**
