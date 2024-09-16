@@ -1,7 +1,4 @@
-const DEFAULT_INPUT_TEXT = '';
-const DEFAULT_OUTPUT_TEXT = '';
-const DEFAULT_ORIGIN_LAN = ''; // Empty string means detect langauge
-const DEFAULT_DESTINATION_LAN = 'en' // English
+const DEFAULT_DESTINATION_LAN = 'en';
 
 const LANGUAGE_MAP =
     [
@@ -142,7 +139,7 @@ function createHomepageCard(e) {
     var slidesEventObject = e['slides'];
 
     if (slidesEventObject['addonHasFileScopePermission']) {
-        return createSelectionCard(e, DEFAULT_ORIGIN_LAN, DEFAULT_DESTINATION_LAN, DEFAULT_INPUT_TEXT, DEFAULT_OUTPUT_TEXT);
+        return createSelectionCard(e, DEFAULT_DESTINATION_LAN);
     } else {
         var builder = CardService.newCardBuilder();
         var cardSection = CardService.newCardSection();
@@ -166,51 +163,23 @@ function createHomepageCard(e) {
 
 /**
  * Main function to generate the main card.
- * @param {String} originLanguage Language of the original text.
  * @param {String} destinationLanguage Language of the translation.
- * @param {String} inputText The text to be translated.
- * @param {String} outputText The text translated.
  * @return {CardService.Card} The card to show to the user.
  */
-function createSelectionCard(e, originLanguage, destinationLanguage, inputText, outputText) {
+function createSelectionCard(e, destinationLanguage) {
     var builder = CardService.newCardBuilder();
-
-    // "From" language selection & text input section
-    var fromSection = CardService.newCardSection()
-        .addWidget(generateLanguagesDropdown('origin', 'From: ', originLanguage))
-        .addWidget(CardService.newTextInput()
-            .setFieldName('input')
-            .setValue(inputText)
-            .setTitle('Enter text...')
-            .setMultiline(true))
-        .addWidget(CardService.newButtonSet()
-            .addButton(CardService.newTextButton()
-                .setText('Get Selection')
-                .setOnClickAction(CardService.newAction().setFunctionName('getSlidesSelection'))
-                .setDisabled(false)));
-
-    builder.addSection(fromSection);
 
     // "Translation" language selection & text input section
     builder.addSection(CardService.newCardSection()
-        .addWidget(generateLanguagesDropdown('destination', 'To: ', destinationLanguage))
-        .addWidget(CardService.newTextInput()
-            .setFieldName('output')
-            .setValue(outputText)
-            .setTitle('Translation...')
-            .setMultiline(true)));
+        .addWidget(generateLanguagesDropdown('destination', 'To: ', destinationLanguage)));
 
     //Buttons section
     builder.addSection(CardService.newCardSection()
         .addWidget(CardService.newButtonSet()
             .addButton(CardService.newTextButton()
-                .setText('Translate')
+                .setText('Translate Presentation')
                 .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
                 .setOnClickAction(CardService.newAction().setFunctionName('translatePresentation'))
-                .setDisabled(false))
-            .addButton(CardService.newTextButton()
-                .setText('Clear')
-                .setOnClickAction(CardService.newAction().setFunctionName('clearText'))
                 .setDisabled(false))));
 
     return builder.build();
@@ -234,53 +203,6 @@ function generateLanguagesDropdown(fieldName, fieldTitle, previousSelected) {
     })
 
     return selectionInput;
-}
-
-/**
- * Helper function to translate the text. If the originLanguage is an empty string, the API detects the language
- * @return {CardService.Card} The card to show to the user.
- */
-function translateText(e) {
-    var originLanguage = e.formInput.origin;
-    var destinationLanguage = e.formInput.destination;
-    var inputText = e.formInput.input;
-
-    if (originLanguage !== destinationLanguage && inputText !== undefined) {
-        var translation = LanguageApp.translate(e.formInput.input, e.formInput.origin, e.formInput.destination);
-        return createSelectionCard(e, originLanguage, destinationLanguage, inputText, translation);
-    }
-}
-
-/**
- * Helper function to clean the text.
- * @return {CardService.Card} The card to show to the user.
- */
-function clearText(e) {
-    var originLanguage = e.formInput.origin;
-    var destinationLanguage = e.formInput.destination;
-    return createSelectionCard(e, originLanguage, destinationLanguage, DEFAULT_INPUT_TEXT, DEFAULT_OUTPUT_TEXT);
-}
-
-/**
- * Helper function to get the selected text of the active slide.
- * @return {CardService.Card} The selected text.
- */
-function getSlidesSelection(e) {
-    var text = '';
-    var selection = SlidesApp.getActivePresentation().getSelection();
-    var selectionType = selection.getSelectionType();
-    if (selectionType === SlidesApp.SelectionType.TEXT) {
-        var textRange = selection.getTextRange();
-        if (textRange.asString() !== '') {
-            text += textRange.asString() + '\n';
-        }
-    }
-    if (text !== '') {
-        var originLanguage = e.formInput.origin;
-        var destinationLanguage = e.formInput.destination;
-        var translation = LanguageApp.translate(text, e.formInput.origin, e.formInput.destination);
-        return createSelectionCard(e, originLanguage, destinationLanguage, text, translation);
-    }
 }
 
 /**
