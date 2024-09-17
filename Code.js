@@ -164,7 +164,7 @@ function generateLanguagesDropdown(fieldName, fieldTitle, previousSelected) {
 }
 
 /**
- * Recursively gets child text elements a list of elements.
+ * Gets text elements from a list of elements.
  * @param {PageElement[]} elements The elements to get text from.
  * @return {Text[]} An array of text elements.
  */
@@ -173,18 +173,25 @@ function getElementTexts(elements) {
         elements = [elements];
     }
 
-    return elements.flatMap((element) => {
-        switch (element.getPageElementType()) {
-            case SlidesApp.PageElementType.GROUP:
-                return getGroupTexts(element.asGroup());
-            case SlidesApp.PageElementType.TABLE:
-                return getTableTexts(element.asTable());
-            case SlidesApp.PageElementType.SHAPE:
-                return getShapeTexts(element.asShape());
-            default:
-                return [];
-        }
-    });
+    return elements.flatMap(getSingleElementTexts);
+}
+
+/**
+ * Gets text elements from an element.
+ * @param {PageElement} element The element to get text from.
+ * @return {Text[]} An array of text elements.
+ */
+function getSingleElementTexts(element) {
+    switch (element.getPageElementType()) {
+        case SlidesApp.PageElementType.GROUP:
+            return getGroupTexts(element.asGroup());
+        case SlidesApp.PageElementType.TABLE:
+            return getTableTexts(element.asTable());
+        case SlidesApp.PageElementType.SHAPE:
+            return getShapeTexts(element.asShape());
+        default:
+            return [];
+    }
 }
 
 /**
