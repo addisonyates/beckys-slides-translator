@@ -8,7 +8,7 @@ This code is based on Google's sample translate add-ons ([here](https://develope
 
 ## Installation
 
-To install this add-on, you will need to create a Google Apps Script project and a Google Cloud project. See [this guide](https://developers.google.com/workspace/add-ons/how-tos/building-workspace-addons). Once the Apps Script project is created, copy the `appsscript.json` and `Code.gs` source files from this repository into the Apps Script project.
+To install this add-on, you will need to create a Google Apps Script project and a Google Cloud project. See [this guide](https://developers.google.com/workspace/add-ons/how-tos/building-workspace-addons). Once the Apps Script project is created, copy the `appsscript.json` and `translator.gs` source files from this repository into the Apps Script project.
 
 You can then [install the unpublished add-on](https://developers.google.com/workspace/add-ons/how-tos/testing-workspace-addons#install_an_unpublished_add-on), at which point it should be visible in the sidebar of the Google Slides editor for your Google account:
 
